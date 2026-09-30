@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Battery Selector" />
+  <meta name="theme-color" content="#f3f7f4" />
+  <meta name="description" content="Trinity Total Home demo: size Tesla Powerwall 3 batteries and expansion modules, then see energy, power, and backup runtime from the customer's annual usage." />
+  <title>Battery Selector | Trinity Total Home</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css?v=2" />
+</head>
+<body>
+  <div class="atmosphere" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div>
+      <p class="brand">Trinity Total Home</p>
+      <p class="brand-sub">Solar · Roofing · Battery Backup</p>
+    </div>
+    <p class="tool-chip">Battery selector · demo</p>
+  </header>
+
+  <main class="page">
+    <section class="hero">
+      <h1>Size the <em>Powerwall 3</em></h1>
+      <p class="lede">
+        Choose Powerwall 3 units and expansion modules. Energy, power, and backup hours
+        update from this home’s annual usage.
+      </p>
+    </section>
+
+    <div class="layout">
+      <section class="panel configure" aria-labelledby="configure-title">
+        <h2 id="configure-title">This home</h2>
+
+        <label class="field">
+          <span class="field-label">Homeowner <span class="optional">optional</span></span>
+          <input id="customer-name" type="text" placeholder="The Barrett family" autocomplete="name" enterkeyhint="next" />
+        </label>
+
+        <label class="field">
+          <span class="field-label">Annual usage</span>
+          <div class="usage-input">
+            <input id="annual-kwh" type="number" inputmode="decimal" min="1000" max="80000" step="100" value="10000" />
+            <span class="usage-unit">kWh / year</span>
+          </div>
+        </label>
+        <div class="chips" role="group" aria-label="Typical annual usage">
+          <button type="button" class="chip" data-kwh="7000">7,000</button>
+          <button type="button" class="chip is-on" data-kwh="10000">10,000</button>
+          <button type="button" class="chip" data-kwh="12000">12,000</button>
+          <button type="button" class="chip" data-kwh="16000">16,000</button>
+          <button type="button" class="chip" data-kwh="20000">20,000</button>
+        </div>
+        <p class="hint" id="usage-hint">About 27 kWh per day, 1.1 kW average.</p>
+
+        <div class="stepper-block">
+          <div class="stepper-copy">
+            <h3>Powerwall 3</h3>
+            <p>13.5 kWh and 11.5 kW each. Built-in inverter.</p>
+          </div>
+          <div class="stepper" data-stepper="pw3">
+            <button type="button" class="stepper-btn" data-delta="-1" aria-label="Fewer Powerwall 3 units">−</button>
+            <span class="stepper-value" id="pw3-count" aria-live="polite">1</span>
+            <button type="button" class="stepper-btn" data-delta="1" aria-label="More Powerwall 3 units">+</button>
+          </div>
+        </div>
+
+        <div class="stepper-block">
+          <div class="stepper-copy">
+            <h3>Expansion modules</h3>
+            <p>13.5 kWh each. Storage only — no extra power.</p>
+          </div>
+          <div class="stepper" data-stepper="exp">
+            <button type="button" class="stepper-btn" data-delta="-1" aria-label="Fewer expansion modules">−</button>
+            <span class="stepper-value" id="exp-count" aria-live="polite">0</span>
+            <button type="button" class="stepper-btn" data-delta="1" aria-label="More expansion modules">+</button>
+          </div>
+        </div>
+
+        <p class="limit-note" id="limit-note" hidden></p>
+
+        <fieldset class="load-toggle">
+          <legend>Backup load</legend>
+          <div class="segmented" role="radiogroup" aria-label="Backup load">
+            <button type="button" class="seg is-on" role="radio" aria-checked="true" data-load="100">Whole home</button>
+            <button type="button" class="seg" role="radio" aria-checked="false" data-load="40">Essentials</button>
+          </div>
+          <p class="hint" id="load-hint">Uses this home’s average load from annual usage.</p>
+        </fieldset>
+
+        <div class="rack" id="rack" aria-hidden="true"></div>
+        <p class="rack-caption" id="rack-caption">1 Powerwall 3</p>
+      </section>
+
+      <section class="results" aria-labelledby="results-title">
+        <div class="results-head">
+          <p class="side-kicker" id="results-kicker">System snapshot</p>
+          <h2 id="results-title">What this system does</h2>
+        </div>
+
+        <div class="hero-runtime panel runtime-card" aria-live="polite">
+          <p class="metric-label">Expected runtime</p>
+          <p class="runtime-value"><span id="runtime-hours">11.8</span><span class="runtime-unit">hours</span></p>
+          <p class="runtime-sub" id="runtime-sub">of whole-home backup if the battery is full at the start of an outage</p>
+          <div class="day-meter" aria-hidden="true">
+            <div class="day-meter-track">
+              <div class="day-meter-fill" id="day-fill"></div>
+            </div>
+            <div class="day-meter-labels">
+              <span>0 h</span>
+              <span>12 h</span>
+              <span>24 h</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <article class="panel stat">
+            <p class="metric-label">Energy capacity</p>
+            <p class="stat-value"><span id="energy-kwh">13.5</span><span class="stat-unit">kWh</span></p>
+            <p class="stat-note" id="energy-note">1 × 13.5 kWh</p>
+          </article>
+          <article class="panel stat">
+            <p class="metric-label">Power capacity</p>
+            <p class="stat-value"><span id="power-kw">11.5</span><span class="stat-unit">kW</span></p>
+            <p class="stat-note" id="power-note">Continuous on-grid. Off-grid 15.4 kW.</p>
+          </article>
+        </div>
+
+        <p class="coach panel" id="coach">
+          A Powerwall 3 adds both energy and power. Expansion modules add energy only.
+        </p>
+
+        <div class="panel detail-card">
+          <h3>How the hours are calculated</h3>
+          <dl class="facts" id="facts">
+            <div><dt>Daily usage</dt><dd id="fact-daily">27.4 kWh</dd></div>
+            <div><dt>Average load</dt><dd id="fact-load">1.14 kW</dd></div>
+            <div><dt>Days of backup</dt><dd id="fact-days">0.5 days</dd></div>
+            <div><dt>Charge power</dt><dd id="fact-charge">5 kW</dd></div>
+          </dl>
+          <p class="formula" id="formula">13.5 kWh ÷ 1.14 kW = 11.8 hours</p>
+        </div>
+
+        <div class="panel loads-card">
+          <h3>Hours at common loads</h3>
+          <ul class="load-list" id="load-list"></ul>
+        </div>
+
+        <div class="share-row">
+          <button type="button" class="btn-ghost" id="copy-link">Copy share link</button>
+          <button type="button" class="btn-primary" id="print-btn">Print this snapshot</button>
+        </div>
+        <p class="share-status" id="share-status" role="status"></p>
+      </section>
+    </div>
+
+    <section class="panel spec-card">
+      <h2>Tesla Powerwall 3 specs used in this demo</h2>
+      <div class="spec-grid">
+        <article>
+          <h3>Powerwall 3</h3>
+          <ul>
+            <li>13.5 kWh nominal energy</li>
+            <li>11.5 kW continuous AC power</li>
+            <li>15.4 kW off-grid continuous (11.5 kW config, 80 A breaker)</li>
+            <li>5 kW charge without expansions</li>
+            <li>Up to 20 kW DC solar input</li>
+            <li>185 LRA motor-start capability</li>
+            <li>Up to 4 units per system</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Expansion module</h3>
+          <ul>
+            <li>13.5 kWh nominal energy</li>
+            <li>No inverter — does not add kW</li>
+            <li>8 kW charge on the leader Powerwall 3 when expansions are installed</li>
+            <li>Up to 3 expansions per system</li>
+            <li>Must connect to the leader Powerwall 3</li>
+            <li>Maximum system: 4 Powerwall 3 + 3 expansions = 94.5 kWh, 46 kW</li>
+          </ul>
+        </article>
+      </div>
+      <p class="spec-source">
+        Source:
+        <a href="https://energylibrary.tesla.com/docs/Public/EnergyStorage/Powerwall/3/Datasheet/en-us/Powerwall-3-Datasheet.pdf" target="_blank" rel="noopener">Tesla Powerwall 3 Datasheet (US, 2025)</a>.
+        Runtime assumes a full battery at the start of an outage and a steady load equal to annual kWh ÷ 8,760 hours.
+        Real outages vary with weather, heat pumps, well pumps, and how much of the house is backed up.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Trinity Total Home · internal sizing demo · not a Tesla product and not a contract proposal.</p>
+  </footer>
+
+  <script src="app.js?v=2"></script>
+</body>
+</html>
